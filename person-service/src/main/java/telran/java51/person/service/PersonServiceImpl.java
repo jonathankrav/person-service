@@ -1,13 +1,16 @@
 package telran.java51.person.service;
 
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import telran.java51.person.dao.PersonRepository;
+import telran.java51.person.dto.AddressDto;
 import telran.java51.person.dto.PersonDto;
 import telran.java51.person.dto.exceptions.PersonNotFoundException;
+import telran.java51.person.model.Address;
 import telran.java51.person.model.Person;
 
 
@@ -35,39 +38,51 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
-	public PersonDto[] findByCity(String city) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<PersonDto> findByCity(String city) {
+		return personRepository.finByCityIgnoreCase(city)
+				.map(p->modelMapper.map(p, PersonDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public PersonDto[] findByAges(int ageFrom, int ageTo) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<PersonDto> findByAges(int ageFrom, int ageTo) {
+		return personRepository.findByAges(ageFrom, ageTo)
+				.map(p->modelMapper.map(p, PersonDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public PersonDto updateNameById(Integer id, String newName) {
-		// TODO Auto-generated method stub
-		return null;
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		if (newName != null) {
+			person.setName(newName);
+		}
+		personRepository.save(person);
+		return modelMapper.map(person, PersonDto.class);
 	}
 
 	@Override
-	public PersonDto[] findByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<PersonDto> findByName(String name) {
+		return personRepository.findByNameIgnoreCase(name)
+				.map(p->modelMapper.map(p, PersonDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public PersonDto updateAddressById(Integer id, Address newAddress) {
-		// TODO Auto-generated method stub
-		return null;
+	public PersonDto updateAddressById(Integer id, AddressDto newAddress) {
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		if (newAddress.getCity() !=null && newAddress.getStreet() != null && newAddress.getBuilding() !=null) {
+			person.setAddress(modelMapper.map(newAddress, Address.class));;
+		}
+		personRepository.save(person);
+		return modelMapper.map(person, PersonDto.class);
 	}
 
 	@Override
 	public PersonDto removePersonById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		personRepository.delete(person);
+		return modelMapper.map(person, PersonDto.class);
 	}
 
 }

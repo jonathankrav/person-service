@@ -1,7 +1,6 @@
 package telran.java51.person.service;
 
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
-
+import telran.java51.person.dto.AddressDto;
 import telran.java51.person.dto.PersonDto;
 
 public interface PersonService {
@@ -10,15 +9,15 @@ public interface PersonService {
 
 	PersonDto findPersonById(Integer id);
 	
-	PersonDto[] findByCity(String city);
+	Iterable<PersonDto> findByCity(String city);
 	
-	PersonDto[] findByAges(int ageFrom, int ageTo);
+	Iterable<PersonDto> findByAges(int ageFrom, int ageTo);
 	
 	PersonDto updateNameById(Integer id, String newName);
 	
-	PersonDto[] findByName(String name);
+	Iterable<PersonDto> findByName(String name);
 	
-	PersonDto updateAddressById(Integer id, Address newAddress);
+	PersonDto updateAddressById(Integer id, AddressDto newAddress);
 	
 	PersonDto removePersonById(Integer id);
 
