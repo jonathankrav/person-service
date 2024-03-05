@@ -36,8 +36,8 @@ public class PersonController {
     }
 	
 	@GetMapping("/ages/{ageFrom}/{ageTo}")
-	public Iterable<PersonDto> findByAges(@PathVariable Integer ageFrom, @PathVariable Integer ageTo) {
-		return personService.findByAges(ageFrom, ageTo);
+	public Iterable<PersonDto> findByAge(@PathVariable Integer ageFrom, @PathVariable Integer ageTo) {
+		return personService.findByAge(ageFrom, ageTo);
 	}
 	
 	@PutMapping("/{id}/name/{newName}")

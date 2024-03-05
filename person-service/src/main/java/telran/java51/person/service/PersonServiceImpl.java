@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import telran.java51.person.dao.PersonRepository;
@@ -38,15 +39,18 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional
 	public Iterable<PersonDto> findByCity(String city) {
-		return personRepository.finByCityIgnoreCase(city)
+		return personRepository.findByAddressCityIgnoreCase(city)
+				.filter(p -> p.getAddress().getCity().equalsIgnoreCase(city))
 				.map(p->modelMapper.map(p, PersonDto.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Iterable<PersonDto> findByAges(int ageFrom, int ageTo) {
-		return personRepository.findByAges(ageFrom, ageTo)
+	@Transactional
+	public Iterable<PersonDto> findByAge(int ageFrom, int ageTo) {
+		return personRepository.findByAgeBetween(ageFrom, ageTo)
 				.map(p->modelMapper.map(p, PersonDto.class))
 				.collect(Collectors.toList());
 	}
@@ -62,6 +66,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional
 	public Iterable<PersonDto> findByName(String name) {
 		return personRepository.findByNameIgnoreCase(name)
 				.map(p->modelMapper.map(p, PersonDto.class))

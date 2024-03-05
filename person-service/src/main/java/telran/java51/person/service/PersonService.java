@@ -11,7 +11,7 @@ public interface PersonService {
 	
 	Iterable<PersonDto> findByCity(String city);
 	
-	Iterable<PersonDto> findByAges(int ageFrom, int ageTo);
+	Iterable<PersonDto> findByAge(int ageFrom, int ageTo);
 	
 	PersonDto updateNameById(Integer id, String newName);
 	
