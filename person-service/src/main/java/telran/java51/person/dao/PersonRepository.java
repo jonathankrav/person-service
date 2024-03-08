@@ -12,24 +12,24 @@ import telran.java51.person.dto.CityPopulationDto;
 import telran.java51.person.model.Person;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
+	Stream<Person> findByNameIgnoreCase(String name);
 
-	@Query("select p from Person p where p.address.city=:cityName")
-	Stream <Person> findByAddressCityIgnoreCase(@Param("cityName") String city);
-	
-	
-	@Query("select p from Person p where p.name=?1")
-	Stream <Person> findByNameIgnoreCase(String name); 
-	
-	default Stream<Person> findByAgeBetween(int ageFrom, int ageTo) {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate birthDateFrom = currentDate.minusYears(ageTo);
-        LocalDate birthDateTo = currentDate.minusYears(ageFrom);
-        return findByBirthDateBetween(birthDateFrom, birthDateTo);
-    }
+	Stream<Person> findByAddressCityIgnoreCase(@Param("cityName") String city);
 
-	Stream<Person> findByBirthDateBetween(LocalDate fromDate, LocalDate toDate);
-	
+	Stream<Person> findByBirthDateBetween(LocalDate from, LocalDate to);
+
 	@Query("select new telran.java51.person.dto.CityPopulationDto(p.address.city, count(p)) from Person p group by p.address.city order by count(p) desc")
 	List<CityPopulationDto> getCitiesPopulation();
+	
+	@Query("select c from Child c")
+	List<Person> findAllChild();
+	
+	@Query("select e from Employee e where e.salary between :minSalary and :maxSalary")
+	List<Person> findEmployeesBySalary(Integer minSalary, Integer maxSalary);
+
+//	Ver 2
+//	@Query("select e from Employee e")
+//	List<Person> findAllEmployees();
+	
 	
 }
