@@ -152,28 +152,19 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	@Transactional(readOnly = true)
 	public List<Object> findPersonsByCity(String city) {
 		List<Object> list = personRepository.findByAddressCityIgnoreCase(city).collect(Collectors.toList());
-		List<Object> res = new ArrayList<>();
-		for (Object obj : list) {
-			if (obj instanceof Child) {
-				res.add(modelMapper.map(obj, ChildDto.class));
-				continue;
-			} else if (obj instanceof Employee) {
-				res.add(modelMapper.map(obj, EmployeeDto.class));
-				continue;
-			} else {
-				res.add(modelMapper.map(obj, PersonDto.class));
-			}
-		}
-		return res;
+		return mapper(list);
 	}
 
-	// TODO
 	@Transactional(readOnly = true)
 	@Override
 	public List<Object> findPersonsBetweenAge(Integer minAge, Integer maxAge) {
 		LocalDate from = LocalDate.now().minusYears(maxAge);
 		LocalDate to = LocalDate.now().minusYears(minAge);
 		List<Object> list = personRepository.findByBirthDateBetween(from, to).collect(Collectors.toList());
+		return mapper(list);
+	}
+
+	private List<Object> mapper (List<Object> list) {
 		List<Object> res = new ArrayList<>();
 		for (Object obj : list) {
 			if (obj instanceof Child) {
@@ -185,10 +176,11 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 			} else {
 				res.add(modelMapper.map(obj, PersonDto.class));
 			}
-		}
+		}	
 		return res;
 	}
-
+	
+	
 	@Override
 	public Iterable<CityPopulationDto> getCitiesPopulation() {
 		return personRepository.getCitiesPopulation();
