@@ -50,29 +50,14 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	public PersonDto findPersonById(Integer id) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		System.out.println(person.getClass().getSimpleName());
-		if (person instanceof Child child) {
-			return modelMapper.map(child, ChildDto.class);
-		}
-		if (person instanceof Employee employee) {
-			return modelMapper.map(employee, EmployeeDto.class);
-		}
-		return modelMapper.map(person, PersonDto.class);
+		return mapper(person, null);
 	}
 
 	@Transactional
 	@Override
 	public PersonDto removePerson(Integer id) {
 		Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException());
-		if (person instanceof Child child) {
-			personRepository.delete(child);
-			return modelMapper.map(child, ChildDto.class);
-		} else if (person instanceof Employee employee) {
-			personRepository.delete(employee);
-			return modelMapper.map(employee, EmployeeDto.class);
-		} else {
-			personRepository.delete(person);
-			return modelMapper.map(person, PersonDto.class);
-		}
+		return mapper(person, "delete");
 	}
 
 	@Transactional
@@ -80,13 +65,7 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	public PersonDto updatePersonName(Integer id, String name) {
 		Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException());
 		person.setName(name);
-		if (person instanceof Child child) {
-			return modelMapper.map(child, ChildDto.class);
-		} else if (person instanceof Employee employee) {
-			return modelMapper.map(employee, EmployeeDto.class);
-		} else {
-			return modelMapper.map(person, PersonDto.class);
-		}
+		return mapper(person, null);
 	}
 
 	@Transactional
@@ -94,16 +73,29 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	public PersonDto updatePersonAddress(Integer id, AddressDto addressDto) {
 		Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException());
 		person.setAddress(modelMapper.map(addressDto, Address.class));
+		return mapper(person, null);
+	}
+	
+	private PersonDto mapper (Person person, String action) {
 		if (person instanceof Child child) {
+			if (action.equalsIgnoreCase("delete")) {
+				personRepository.delete(child);
+			}
 			return modelMapper.map(child, ChildDto.class);
 		} else if (person instanceof Employee employee) {
+			if (action.equalsIgnoreCase("delete")) {
+				personRepository.delete(employee);
+			}
 			return modelMapper.map(employee, EmployeeDto.class);
 		} else {
+			if (action.equalsIgnoreCase("delete")) {
+				personRepository.delete(person);
+			}
 			return modelMapper.map(person, PersonDto.class);
 		}
 	}
 
-//	//TODO
+//	// TODO
 //	@Transactional(readOnly = true)
 //	@Override
 //	public Iterable<PersonDto> findPersonsByCity(String city) {
@@ -133,26 +125,14 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	@Transactional(readOnly = true)
 	public List<Object> findPersonsByName(String name) {
 		List<Object> list = personRepository.findByNameIgnoreCase(name).collect(Collectors.toList());
-		List<Object> res = new ArrayList<>();
-		for (Object obj : list) {
-			if (obj instanceof Child) {
-				res.add(modelMapper.map(obj, ChildDto.class));
-				continue;
-			} else if (obj instanceof Employee) {
-				res.add(modelMapper.map(obj, EmployeeDto.class));
-				continue;
-			} else {
-				res.add(modelMapper.map(obj, PersonDto.class));
-			}
-		}
-		return res;
+		return mapToList(list);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<Object> findPersonsByCity(String city) {
 		List<Object> list = personRepository.findByAddressCityIgnoreCase(city).collect(Collectors.toList());
-		return mapper(list);
+		return mapToList(list);
 	}
 
 	@Transactional(readOnly = true)
@@ -161,10 +141,10 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 		LocalDate from = LocalDate.now().minusYears(maxAge);
 		LocalDate to = LocalDate.now().minusYears(minAge);
 		List<Object> list = personRepository.findByBirthDateBetween(from, to).collect(Collectors.toList());
-		return mapper(list);
+		return mapToList(list);
 	}
 
-	private List<Object> mapper (List<Object> list) {
+	private List<Object> mapToList (List<Object> list) {
 		List<Object> res = new ArrayList<>();
 		for (Object obj : list) {
 			if (obj instanceof Child) {
