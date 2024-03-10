@@ -18,11 +18,6 @@ public interface PersonService {
 	PersonDto updatePersonName(Integer id, String name);
 
 	PersonDto updatePersonAddress(Integer id, AddressDto addressDto);
-
-//	Iterable<PersonDto> findPersonsByCity(String city);
-//	Iterable<PersonDto> findPersonsByName(String name);
-//	Iterable<PersonDto> findPersonsBetweenAge(Integer minAge, Integer maxAge);
-	
 	
 	List<Object> findPersonsByCity(String city);
 	List<Object> findPersonsByName(String name);

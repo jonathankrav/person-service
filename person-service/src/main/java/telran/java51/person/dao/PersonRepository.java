@@ -26,10 +26,6 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
 	
 	@Query("select e from Employee e where e.salary between :minSalary and :maxSalary")
 	List<Person> findEmployeesBySalary(Integer minSalary, Integer maxSalary);
-
-//	Ver 2
-//	@Query("select e from Employee e")
-//	List<Person> findAllEmployees();
 	
 	
 }

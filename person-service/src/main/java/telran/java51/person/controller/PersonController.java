@@ -50,30 +50,15 @@ public class PersonController {
 		return personService.updatePersonAddress(id, addressDto);
 	}
 
-//	@GetMapping("/name/{name}")
-//	public Iterable<PersonDto> findByName(@PathVariable String name) {
-//		return personService.findPersonsByName(name);
-//	}
-
 	@GetMapping("/name/{name}")
 	public List<Object> findByName(@PathVariable String name) {
 		return personService.findPersonsByName(name);
 	}
 	
-//	@GetMapping("/city/{city}")
-//	public Iterable<PersonDto> findByCity(@PathVariable String city) {
-//		return personService.findPersonsByCity(city);
-//	}
-	
 	@GetMapping("/city/{city}")
 	public List<Object> findByCity(@PathVariable String city) {
 		return personService.findPersonsByCity(city);
 	}
-
-//	@GetMapping("/ages/{min}/{max}")
-//	public Iterable<PersonDto> findPersonsBetweenAge(@PathVariable Integer min, @PathVariable Integer max) {
-//		return personService.findPersonsBetweenAge(min, max);
-//	}
 	
 	@GetMapping("/ages/{min}/{max}")
 	public List<Object> findPersonsBetweenAge(@PathVariable Integer min, @PathVariable Integer max) {
